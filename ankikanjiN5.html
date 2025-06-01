@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Latihan Kanji Offline</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    #card { font-size: 3em; margin: 40px 0; color: red; }
+    #details { font-size: 1.2em; margin: 20px 0; display: none; }
+    button { font-size: 1em; padding: 10px 20px; margin: 10px; }
+  </style>
+</head>
+<body>
+
+<h1>KANJI N5</h1>
+
+<div id="card"></div>
+<div id="details"></div>
+<div id="buttons" style="display:none;">
+  <button onclick="nextCard()">Paham</button>
+  <button onclick="nextCard()">Tidak Paham</button>
+</div>
+
+<script>
+  // Daftar kanji langsung dari kode
+  const cards = [
+    { kanji: "日", onyomi: "ニチ, ジツ", kunyomi: "ひ, -び, -か", meaning: "hari, matahari" },
+  { kanji: "一", onyomi: "イチ, イツ", kunyomi: "ひと-, ひとつ", meaning: "satu" },
+  { kanji: "国", onyomi: "コク", kunyomi: "くに", meaning: "negara" },
+  { kanji: "人", onyomi: "ジン, ニン", kunyomi: "ひと", meaning: "orang" },
+  { kanji: "年", onyomi: "ネン", kunyomi: "とし", meaning: "tahun" },
+  { kanji: "大", onyomi: "ダイ, タイ", kunyomi: "おお-, おおきい, おおいに", meaning: "besar" },
+  { kanji: "十", onyomi: "ジュウ, ジッ", kunyomi: "とお, と", meaning: "sepuluh" },
+  { kanji: "二", onyomi: "ニ", kunyomi: "ふた, ふたつ", meaning: "dua" },
+  { kanji: "本", onyomi: "ホン", kunyomi: "もと", meaning: "buku, asal" },
+  { kanji: "中", onyomi: "チュウ", kunyomi: "なか, うち, あたる", meaning: "dalam, tengah" },
+  { kanji: "長", onyomi: "チョウ", kunyomi: "ながい", meaning: "panjang" },
+  { kanji: "出", onyomi: "シュツ, スイ", kunyomi: "でる, だす", meaning: "keluar" },
+  { kanji: "三", onyomi: "サン", kunyomi: "み, みつ, みっつ", meaning: "tiga" },
+  { kanji: "時", onyomi: "ジ", kunyomi: "とき, -どき", meaning: "waktu, jam" },
+  { kanji: "行", onyomi: "コウ, ギョウ, アン", kunyomi: "いく, ゆく, おこなう", meaning: "pergi, menjalankan" },
+  { kanji: "見", onyomi: "ケン", kunyomi: "みる, みえる, みせる", meaning: "melihat" },
+  { kanji: "月", onyomi: "ゲツ, ガツ", kunyomi: "つき", meaning: "bulan" },
+  { kanji: "後", onyomi: "ゴ, コウ", kunyomi: "のち, うしろ, あと, おくれる", meaning: "setelah, belakang" },
+  { kanji: "前", onyomi: "ゼン", kunyomi: "まえ", meaning: "sebelum, depan" },
+  { kanji: "生", onyomi: "セイ, ショウ", kunyomi: "いきる, うまれる, なま", meaning: "hidup, lahir" },
+  { kanji: "五", onyomi: "ゴ", kunyomi: "いつ, いつつ", meaning: "lima" },
+  { kanji: "間", onyomi: "カン, ケン", kunyomi: "あいだ, ま", meaning: "antara, waktu" },
+  { kanji: "上", onyomi: "ジョウ, ショウ", kunyomi: "うえ, あげる, のぼる", meaning: "atas" },
+  { kanji: "東", onyomi: "トウ", kunyomi: "ひがし", meaning: "timur" },
+  { kanji: "四", onyomi: "シ", kunyomi: "よ, よん, よっつ", meaning: "empat" },
+  { kanji: "今", onyomi: "コン, キン", kunyomi: "いま", meaning: "sekarang" },
+  { kanji: "金", onyomi: "キン, コン", kunyomi: "かね, かな", meaning: "emas, uang" },
+  { kanji: "九", onyomi: "キュウ, ク", kunyomi: "ここの, ここのつ", meaning: "sembilan" },
+  { kanji: "入", onyomi: "ニュウ", kunyomi: "いる, はいる, いれる", meaning: "masuk" },
+  { kanji: "学", onyomi: "ガク", kunyomi: "まなぶ", meaning: "belajar" },
+  { kanji: "高", onyomi: "コウ", kunyomi: "たかい, たか", meaning: "tinggi, mahal" },
+  { kanji: "円", onyomi: "エン", kunyomi: "まるい", meaning: "yen, bulat" },
+  { kanji: "子", onyomi: "シ, ス", kunyomi: "こ", meaning: "anak" },
+  { kanji: "外", onyomi: "ガイ, ゲ", kunyomi: "そと, はずす, ほか", meaning: "luar" },
+  { kanji: "八", onyomi: "ハチ", kunyomi: "や, やつ, よう", meaning: "delapan" },
+  { kanji: "六", onyomi: "ロク", kunyomi: "む, むつ, むい", meaning: "enam" },
+  { kanji: "下", onyomi: "カ, ゲ", kunyomi: "した, さがる, くだる", meaning: "bawah" },
+  { kanji: "来", onyomi: "ライ", kunyomi: "くる, きたる, きたす", meaning: "datang" },
+  { kanji: "気", onyomi: "キ, ケ", kunyomi: "", meaning: "udara, semangat" },
+  { kanji: "小", onyomi: "ショウ", kunyomi: "ちいさい, こ, お", meaning: "kecil" },
+  { kanji: "七", onyomi: "シチ", kunyomi: "なな, ななつ, なの", meaning: "tujuh" },
+  { kanji: "山", onyomi: "サン", kunyomi: "やま", meaning: "gunung" },
+  { kanji: "話", onyomi: "ワ", kunyomi: "はなす, はなし", meaning: "bicara" },
+  { kanji: "女", onyomi: "ジョ, ニョ", kunyomi: "おんな, め", meaning: "perempuan" },
+  { kanji: "北", onyomi: "ホク", kunyomi: "きた", meaning: "utara" },
+  { kanji: "午", onyomi: "ゴ", kunyomi: "", meaning: "siang" },
+  { kanji: "百", onyomi: "ヒャク", kunyomi: "", meaning: "seratus" },
+  { kanji: "書", onyomi: "ショ", kunyomi: "かく", meaning: "menulis" },
+  { kanji: "先", onyomi: "セン", kunyomi: "さき", meaning: "sebelum, depan" },
+  { kanji: "名", onyomi: "メイ, ミョウ", kunyomi: "な", meaning: "nama" },
+  { kanji: "川", onyomi: "セン", kunyomi: "かわ", meaning: "sungai" }
+  ];
+
+  let index = 0;
+  let timer;
+
+  function showCard() {
+    clearTimeout(timer);
+    const card = cards[index];
+    document.getElementById('card').textContent = card.kanji;
+    const detailsDiv = document.getElementById('details');
+    const buttonsDiv = document.getElementById('buttons');
+
+    detailsDiv.style.display = 'none';
+    buttonsDiv.style.display = 'none';
+
+    timer = setTimeout(() => {
+      detailsDiv.innerHTML = `
+        <strong>Onyomi:</strong> ${card.onyomi}<br/>
+        <strong>Kunyomi:</strong> ${card.kunyomi}<br/>
+        <strong>Arti:</strong> ${card.meaning}
+      `;
+      detailsDiv.style.display = 'block';
+      buttonsDiv.style.display = 'block';
+    }, 2500);
+  }
+
+  function nextCard() {
+    index++;
+    if (index >= cards.length) index = 0;
+    showCard();
+  }
+
+  // Mulai otomatis saat halaman dibuka
+  window.onload = showCard;
+</script>
+
+</body>
+</html>
